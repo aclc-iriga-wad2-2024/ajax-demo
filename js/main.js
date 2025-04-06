@@ -1,6 +1,7 @@
 $(function() {
 
-    const btnLogin = $('#btn-login');
+    const btnLogin    = $('#btn-login');
+    const btnLogout   = $('#btn-logout');
     const txtEmail    = $('#email');
     const txtPassword = $('#password');
 
@@ -10,7 +11,7 @@ $(function() {
 
         // initiate ajax request
         $.ajax({
-            url: 'app/login.php',
+            url: 'app/index.php',
             method: 'POST',
             data: {
                 login   : true,
@@ -19,13 +20,59 @@ $(function() {
             },
             success: (data) => {
                 $('.output').html(data);
+                $('.logged-in-user').show();
+                $('.login-form').hide();
             },
             error: (error) => {
-               alert("An error has occurred!")
+                alert(error.responseText);
             },
             complete: (response) => {
-                console.log(response);
+
             }
         });
+    });
+
+    btnLogout.on('click', function() {
+        if (confirm("Are you sure to logout?")) {
+            // initiate ajax request to get logged in user
+            $.ajax({
+                url: 'app/index.php',
+                method: 'POST',
+                data: {
+                    'logout': true
+                },
+                success: (data) => {
+                    window.location.reload();
+                },
+                error: (error) => {
+                    alert(error.responseText);
+                },
+                complete: (response) => {
+
+                }
+            });
+        }
+    });
+    
+    // initiate ajax request to get logged in user
+    $.ajax({
+        url: 'app/index.php',
+        method: 'GET',
+        data: {
+            'get_user': true
+        },
+        success: (data) => {
+            $('.output').html(data);
+            $('.logged-in-user').show();
+            $('.login-form').hide();
+        },
+        error: (error) => {
+            $('.login-form').show();
+            $('.logged-in-user').hide();
+            // alert(error.responseText);
+        },
+        complete: (response) => {
+
+        }
     });
 });
