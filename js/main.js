@@ -18,21 +18,14 @@ $(function() {
                 password: password
             },
             success: (data) => {
-                console.log(data);
+                $('.output').html(data);
             },
             error: (error) => {
-                console.error(error);
+               alert("An error has occurred!")
             },
             complete: (response) => {
                 console.log(response);
             }
         });
-
-
-
-        // $('.output').html(
-        //     '<p>' + email + '</p><p>' + password + '</p>'
-        // )
-
     });
 });
