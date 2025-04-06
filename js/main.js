@@ -1,10 +1,14 @@
 $(function() {
-
-    const btnLogin    = $('#btn-login');
-    const btnLogout   = $('#btn-logout');
-    const txtEmail    = $('#email');
-    const txtPassword = $('#password');
-
+    // cache html elements
+    const btnLogin        = $('#btn-login');
+    const btnLogout       = $('#btn-logout');
+    const txtEmail        = $('#email');
+    const txtPassword     = $('#password');
+    const divOutput       = $('.output');
+    const divLoggedInUser = $('.logged-in-user');
+    const divLoginForm    = $('.login-form');
+    
+    // handle user login
     btnLogin.on('click', function() {
         const email = txtEmail.val();
         const password = txtPassword.val();
@@ -19,9 +23,10 @@ $(function() {
                 password: password
             },
             success: (data) => {
-                $('.output').html(data);
-                $('.logged-in-user').show();
-                $('.login-form').hide();
+                const user = JSON.parse(data);
+                divOutput.html("<p>Name: " + user.full_name + "</p><p>Email: " + user.email + "</p>");
+                divLoggedInUser.show();
+                divLoginForm.hide();
             },
             error: (error) => {
                 alert(error.responseText);
@@ -32,6 +37,7 @@ $(function() {
         });
     });
 
+    // handle user logout
     btnLogout.on('click', function() {
         if (confirm("Are you sure to logout?")) {
             // initiate ajax request to get logged in user
@@ -54,7 +60,7 @@ $(function() {
         }
     });
     
-    // initiate ajax request to get logged in user
+    // onload, request for logged in user
     $.ajax({
         url: 'app/index.php',
         method: 'GET',
@@ -62,14 +68,15 @@ $(function() {
             'get_user': true
         },
         success: (data) => {
-            $('.output').html(data);
-            $('.logged-in-user').show();
-            $('.login-form').hide();
+            const user = JSON.parse(data);
+            divOutput.html("<p>Name: " + user.full_name + "</p><p>Email: " + user.email + "</p>");
+            divLoggedInUser.show();
+            divLoginForm.hide();
         },
         error: (error) => {
-            $('.login-form').show();
-            $('.logged-in-user').hide();
             // alert(error.responseText);
+            divLoginForm.show();
+            divLoggedInUser.hide();
         },
         complete: (response) => {
 

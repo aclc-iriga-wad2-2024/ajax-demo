@@ -14,13 +14,14 @@ $valid_users = [
     ]
 ];
 
-// check if login request is sent
+// login request
 if (isset($_POST['login']))
 {
+    // get inputs
     $email    = trim($_POST['email']);
     $password = trim($_POST['password']);
 
-    // check if email and password are provided
+    // validate inputs
     if (empty($email) || empty($password)) {
         http_response_code(403);
         echo "Empty email or password!";
@@ -36,22 +37,33 @@ if (isset($_POST['login']))
             }
         }
 
-        // check if there was an $authenticated_user
+        // validate auth user
         if ($auth_user === null) {
             http_response_code(403);
             echo "Invalid email or password!";
         }
+
+        // set logged-in user
         else {
-            $logged_in_user = ['email' => $auth_user['email'], 'full_name' => $auth_user['full_name']];
+            // encode logged-in user to JSON
+            $logged_in_user_json = json_encode(['email' => $auth_user['email'], 'full_name' => $auth_user['full_name']]);
 
-            setcookie('auth_user', json_encode($logged_in_user), time() + (86400 * 30), '/');
+            // save logged-in user JSON to cookie
+            setcookie('auth_user', $logged_in_user_json, time() + (86400 * 30), '/');
 
-            echo json_encode($logged_in_user);
+            // respond with logged-in user JSON
+            echo $logged_in_user_json;
         }
     }
 }
 
-// check for logged in user
+// logout request
+else if (isset($_POST['logout'])) {
+    // make auth user expired
+    setcookie('auth_user', '', time() - 86400, '/');
+}
+
+// get logged-in user request
 else if($_GET['get_user']) {
     if (isset($_COOKIE['auth_user'])) {
         echo $_COOKIE['auth_user'];
@@ -60,9 +72,4 @@ else if($_GET['get_user']) {
         http_response_code(403);
         echo "Please login first.";
     }
-}
-
-// logout user
-else if (isset($_POST['logout'])) {
-    setcookie('auth_user', '', time() - 86400, '/');
 }
