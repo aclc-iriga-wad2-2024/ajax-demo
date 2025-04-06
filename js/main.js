@@ -8,9 +8,31 @@ $(function() {
         const email = txtEmail.val();
         const password = txtPassword.val();
 
-        $('.output').html(
-            '<p>' + email + '</p><p>' + password + '</p>'
-        )
+        // initiate ajax request
+        $.ajax({
+            url: 'app/login.php',
+            method: 'POST',
+            data: {
+                login   : true,
+                email   : email,
+                password: password
+            },
+            success: (data) => {
+                console.log(data);
+            },
+            error: (error) => {
+                console.error(error);
+            },
+            complete: (response) => {
+                console.log(response);
+            }
+        });
+
+
+
+        // $('.output').html(
+        //     '<p>' + email + '</p><p>' + password + '</p>'
+        // )
 
     });
 });
